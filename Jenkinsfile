@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the Git repository
-                git branch: 'main', url: 'https://github.com/example/repo.git'
+                git branch: 'main', url: 'https://github.com/claypc98/data-design.git'
             }
         }
         
