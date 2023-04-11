@@ -1,18 +1,17 @@
 pipeline {
     agent any
-    
-    environment {
-        GIT_PATH = tool 'Git'
+
+    tools {
+        git 'git'
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the Git repository
                 git branch: 'main', url: 'https://github.com/claypc98/data-design.git'
             }
         }
-        
+
         stage('Check Version Number') {
             steps {
                 script {
@@ -20,9 +19,9 @@ pipeline {
                     def versionString = jsonFile.version
                     def versionNumber = versionString.replaceAll('[^\\d.]', '')
                     println "JSON File Version Number: ${versionNumber}"
-                    
+
                     def gitRepoPath = "${env.WORKSPACE}/application"
-                    sh "${GIT_PATH}/bin/git clone https://github.com/claypc98/application.git ${gitRepoPath}"
+                    sh "git clone https://github.com/claypc98/application.git ${gitRepoPath}"
                     def sqlFiles = sh(script: "ls ${gitRepoPath}/sql", returnStdout: true).trim().split('\n')
                     def latestNumber = 0
                     sqlFiles.each { file ->
@@ -32,7 +31,7 @@ pipeline {
                         }
                     }
                     println "SQL File Latest Number: ${latestNumber}"
-                    
+
                     if (versionNumber == latestNumber.toString()) {
                         println "Version number matches the latest SQL file number"
                     } else {
