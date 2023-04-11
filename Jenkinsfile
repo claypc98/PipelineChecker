@@ -1,14 +1,15 @@
 pipeline {
     agent any
     
+    environment {
+        GIT_PATH = tool 'Git'
+    }
+    
     stages {
         stage('Checkout') {
             steps {
                 // Checkout the Git repository
                 git branch: 'main', url: 'https://github.com/claypc98/data-design.git'
-                
-                // Clone the application repository
-                sh "git clone https://github.com/claypc98/application.git"
             }
         }
         
@@ -20,7 +21,9 @@ pipeline {
                     def versionNumber = versionString.replaceAll('[^\\d.]', '')
                     println "JSON File Version Number: ${versionNumber}"
                     
-                    def sqlFiles = sh(script: "ls application/sql", returnStdout: true).trim().split('\n')
+                    def gitRepoPath = "${env.WORKSPACE}/application"
+                    sh "${GIT_PATH}/bin/git clone https://github.com/claypc98/application.git ${gitRepoPath}"
+                    def sqlFiles = sh(script: "ls ${gitRepoPath}/sql", returnStdout: true).trim().split('\n')
                     def latestNumber = 0
                     sqlFiles.each { file ->
                         def number = file.replaceAll('[^\\d]', '').toInteger()
