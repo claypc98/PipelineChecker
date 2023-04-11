@@ -12,7 +12,7 @@ pipeline {
         stage('Check Version Number') {
             steps {
                 script {
-                    def jsonFile = readJSON file: 'data-design/design/test_model.json'
+                    def jsonFile = readJSON file: 'design/test_model.json'
                     def versionString = jsonFile.version
                     def versionNumber = versionString.replaceAll('[^\\d.]', '')
                     println "Version Number: ${versionNumber}"
