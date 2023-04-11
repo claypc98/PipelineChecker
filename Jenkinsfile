@@ -19,16 +19,22 @@ stage('Check Version Number') {
             
             def gitRepoPath = "${env.WORKSPACE}/application"
             sh "git clone https://github.com/claypc98/application.git ${gitRepoPath}"
-            def sqlFiles = sh(script: "ls ${gitRepoPath}/sql", returnStdout: true).trim().split('\n')
-            def latestFile = sqlFiles.max { it as Integer }
-            def latestNumber = latestFile.replaceAll('[^\\d]', '')
+           def sqlFiles = sh(script: "ls ${gitRepoPath}/sql", returnStdout: true).trim().split('\n')
+            def latestNumber = 0
+            sqlFiles.each { file ->
+                def number = file.replaceAll('[^\\d]', '').toInteger()
+                if (number > latestNumber) {
+                    latestNumber = number
+                }
+            }
             println "SQL File Latest Number: ${latestNumber}"
             
-            if (versionNumber == latestNumber) {
+            if (versionNumber == latestNumber.toString()) {
                 println "Version number matches the latest SQL file number"
             } else {
                 println "Version number does not match the latest SQL file number"
             }
+        }
         }
     }
 }
