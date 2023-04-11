@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label "windows"
+    }
 
     tools {
         git 'git'
@@ -8,21 +10,21 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/claypc98/data-design.git'
+                bat 'git clone https://github.com/claypc98/data-design.git'
             }
         }
 
         stage('Check Version Number') {
             steps {
                 script {
-                    def jsonFile = readJSON file: 'design/test_model.json'
+                    def jsonFile = readJSON file: 'data-design/design/test_model.json'
                     def versionString = jsonFile.version
                     def versionNumber = versionString.replaceAll('[^\\d.]', '')
                     println "JSON File Version Number: ${versionNumber}"
 
                     def gitRepoPath = "${env.WORKSPACE}/application"
-                    sh "git clone https://github.com/claypc98/application.git ${gitRepoPath}"
-                    def sqlFiles = sh(script: "ls ${gitRepoPath}/sql", returnStdout: true).trim().split('\n')
+                    bat "git clone https://github.com/claypc98/application.git ${gitRepoPath}"
+                    def sqlFiles = bat(script: "dir /B ${gitRepoPath}\\sql", returnStdout: true).trim().split('\r?\n')
                     def latestNumber = 0
                     sqlFiles.each { file ->
                         def number = file.replaceAll('[^\\d]', '').toInteger()
