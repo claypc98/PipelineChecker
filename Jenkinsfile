@@ -8,7 +8,7 @@ pipeline {
     steps {
         git branch: 'main',  url: 'https://github.com/claypc98/data-design.git'
         dir('application') {
-            git branch: 'master', url: 'https://github.com/claypc98/application.git'
+            git branch: 'main', url: 'https://github.com/claypc98/application.git'
         }
     }
 }
